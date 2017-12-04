@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Autocomplete Places Search Box using Google Maps JavaScript API by CodexWorld</title>
+<meta charset="utf-8">
+<style>
+html, body {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+}
+#map {
+    position: fixed !important;
+    margin-top: 60px;
+}
+.controls {
+	margin-top: 10px;
+	border: 1px solid transparent;
+	border-radius: 2px 0 0 2px;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	height: 32px;
+	outline: none;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+#searchInput {
+	background-color: #fff;
+	font-family: Roboto;
+	font-size: 15px;
+	font-weight: 300;
+	margin-left: 12px;
+	padding: 0 11px 0 13px;
+	text-overflow: ellipsis;
+	width: 50%;
+}
+#searchInput:focus {
+ 	border-color: #4d90fe;
+}
+
+</style>
+<link href="css/map_stack.css" rel="stylesheet">
+</head>
+<body>
+    <!-- <input id="searchInput" class="controls" type="text" placeholder="Enter a location"> -->
+    <div id="map" class="c-mapstack__map" style=""></div>
+    <div id="content_panel" class="c-mapstack__cards" data-view="cards" data-bottom="false" style="display: block; margin-bottom: 758px;">
+    </div>
+
+<script>
+var map;
+function initMap() {
+    map = new google.maps.Map(document.getElementById('map'), {
+      center: {lat: -33.8688, lng: 151.2195},
+      zoomControl: true,
+      zoomControlOptions: {
+        position: google.maps.ControlPosition.RIGHT_CENTER
+      },
+      zoom: 13
+    });
+}
+</script>
+<script src="scripts/jszip.js"></script>
+<script src="scripts/xlsx.js"></script>
+
+<script src="scripts/jquery.js"></script>
+<script src="scripts/custom.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCidDwInoB5kG1q7_YJeinEER72BMKsZF0&libraries=places&callback=initMap" async defer></script>
+
+</body>
