@@ -70,17 +70,26 @@ $.ajax({
 
     }
   });
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 function geocodeAddress(geocoder, resultsMap) {
-  for (i=0; i<mydata.length; i++) {
-    setTimeout(doSomething(geocoder,resultsMap,i), 1);
-  }
+  // for (i=0; i<mydata.length; i++) {
+  //   sleep(1000).then(() => {
+  //     doSomething(geocoder,resultsMap,i);  
+  //   });
+    
+  // }
   doSomething(geocoder, resultsMap,0);
 }
 
 function doSomething(geocoder, resultsMap,i) {
-  if(i==mydata.length)
+  console.log(i);
+  if(i==mydata.length){
+    console.log(mydata);
     return;
+  }
   var address = mydata[i].Addresssrc + " " + mydata[i].Citysrc + " " + mydata[i].Statesrc;
   // console.log(mydata[i]);
   var temp_content =`
@@ -134,10 +143,18 @@ function doSomething(geocoder, resultsMap,i) {
                 scrollTop: $("#mydata"+i).offset().top
             }, 500);
       }); 
-      // setTimeout(doSomething(geocoder,resultsMap,i+1), 1000);
+      mydata[i].lat =results[0].geometry.location.lat();
+      mydata[i].lng =results[0].geometry.location.lng();
     } else {
       console.log(results);
       alert('Geocode was not successful for the following reason: ' + status);
     }
+    // setTimeout(doSomething(geocoder,resultsMap,i+1), 10000);
+    
+      sleep(1000).then(() => {
+        console.log(i);
+        doSomething(geocoder,resultsMap,i+1);  
+      });
+
   });
 }
