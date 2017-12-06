@@ -126,14 +126,14 @@ function setmapmarker(i) {
 }
 
 function doSomething(resultsMap,i) {
-  var address = mydata[i].Addresssrc + " " + mydata[i].Citysrc;
+  var address = mydata[i].Addresssrc + ", " + mydata[i].Citysrc;
   // console.log(mydata[i]);
   var temp_content =`
         <section id="mydata`+i+`" class="c-mapstack__card" data-slug="intro" style="display: block;" onmouseover="setmapmarker(`+i+`)">
           <h1 style="font-size: 38px;">`+address+`</h1>
-          <h2 class="c-entry-summary p-dek">$`+mydata[i].price+`</h2>
-          <h2 class="c-entry-summary p-dek">`+mydata[i].Representedsrc+`</h2>
-          <h4 class="c-entry-summary p-dek">`+mydata[i].Statussrc+`</h4>
+          <h2 class="c-entry-summary p-dek">Price: $`+mydata[i].price+`</h2>
+          <h2 class="c-entry-summary p-dek">Represented: `+mydata[i].Representedsrc+`</h2>
+          <h4 class="c-entry-summary p-dek">Status: `+mydata[i].Statussrc+`</h4>
           <div class="c-mapstack__photo">
               <figure class="e-image">
                   <span class="e-image__inner">
