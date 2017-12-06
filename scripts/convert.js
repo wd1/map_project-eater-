@@ -12,11 +12,11 @@ function csvJSON(csv){
     var obj = {};
     var before_price = lines[i].split('"$')[0];
     var temp = lines[i].split('"$')[1];
-    var price = temp.split('","')[0];
+    var price = temp.split('","')[0].split('",')[0];
     var after_price = temp.split('","')[1];
     var find = ',';
-    var re = new RegExp(find, 'g');
-    price = price.replace(re, '');
+    // var re = new RegExp(find, 'g');
+    // price = price.replace(re, '');
     
     if(!after_price)
     {

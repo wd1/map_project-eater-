@@ -1,3 +1,6 @@
+// Commas to the price. Add the represented and Status column information below the price.
+// Use Dark Green pin for Buyers and Gold for Sellers.
+
 var mydata;
 var markers=[];
 function csvJSON(csv){
@@ -17,9 +20,9 @@ function csvJSON(csv){
     var price = temp.split('","')[0];
     var after_price = temp.split('","')[1];
     var find = ',';
-    var re = new RegExp(find, 'g');
-    price = price.replace(re, '');
-    
+    // var re = new RegExp(find, 'g');
+    // price = price.replace(re, '');
+    console.log(price);
     if(!after_price)
     {
       after_price = temp.split('",')[1];
@@ -127,8 +130,10 @@ function doSomething(resultsMap,i) {
   // console.log(mydata[i]);
   var temp_content =`
         <section id="mydata`+i+`" class="c-mapstack__card" data-slug="intro" style="display: block;" onmouseover="setmapmarker(`+i+`)">
-          <h1>`+address+`</h1>
+          <h1 style="font-size: 38px;">`+address+`</h1>
           <h2 class="c-entry-summary p-dek">$`+mydata[i].price+`</h2>
+          <h2 class="c-entry-summary p-dek">`+mydata[i].Representedsrc+`</h2>
+          <h4 class="c-entry-summary p-dek">`+mydata[i].Statussrc+`</h4>
           <div class="c-mapstack__photo">
               <figure class="e-image">
                   <span class="e-image__inner">
@@ -149,14 +154,21 @@ function doSomething(resultsMap,i) {
   var content_panel = document.getElementById("content_panel");
   content_panel.innerHTML+=(temp_content);
   // var address = "56 Davis Rd Orinda CA";
+  var iconpath;
+  if(mydata[i].Representedsrc == "Listing Agent")
+  {
+    iconpath = 'asset/markers/gumber_'+i+".png"
+  } else {
+    iconpath = 'asset/markers/number_'+i+".png"
+  }
   var marker = new google.maps.Marker({
     map: resultsMap,
-    icon: 'asset/markers/number_'+i+".png",
+    icon: iconpath,
     position: {lat: mydata[i].lat, lng: mydata[i].lng}
   });
   marker.setOptions({'opacity': 0.7})
   markers.push(marker);
-  console.log(mydata[i]);
+  // console.log(mydata[i]);
   marker.addListener('click', function() {
       map.setCenter(this.getPosition());
       var scale = Math.pow(2, map.getZoom());
