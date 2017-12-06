@@ -1,4 +1,5 @@
 var mydata;
+var markers=[];
 function csvJSON(csv){
   var lines=csv.split("\n");
   var result = [];
@@ -43,57 +44,89 @@ function csvJSON(csv){
   //return result; //JavaScript object
   return (result); //JSON
 }
-$.ajax({
-    url:'asset/samplefileforctms.csv',
-    success: function (data){
-      mydata = (csvJSON(data.trim()));
-      var geocoder = new google.maps.Geocoder();
-      geocodeAddress(geocoder, map);
-      // console.log(e);
-      
-      // var data = e.target.result();
-      // console.log(data);
-      // var workbook = XLSX.read(data, {
-      //   type: 'binary'
-      // });
-
-      // workbook.SheetNames.forEach(function(sheetName) {
-      //   // Here is your object
-      //   var XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
-      //   var json_object = JSON.stringify(XL_row_object);
-      //   console.log(json_object);
-
-      // })
-      //parse your data here
-      //you can split into lines using data.split('\n') 
-      //an use regex functions to effectively parse it
-
+$.getJSON("asset/results.json", function(json) {
+    // console.log(json); // this will show the info it in firebug console
+    mydata= json;
+    for(i=0; i<mydata.length; i++) {
+      doSomething(map,i);
     }
-  });
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
+    map.setCenter({lat: mydata[0].lat, lng: mydata[0].lng});
+});
 
-function geocodeAddress(geocoder, resultsMap) {
-  // for (i=0; i<mydata.length; i++) {
-  //   sleep(1000).then(() => {
-  //     doSomething(geocoder,resultsMap,i);  
-  //   });
+// $.ajax({
+//     url:'asset/samplefileforctms.csv',
+//     success: function (data){
+//       mydata = (csvJSON(data.trim()));
+//       var geocoder = new google.maps.Geocoder();
+//       geocodeAddress(geocoder, map);
+//       // console.log(e);
+      
+//       // var data = e.target.result();
+//       // console.log(data);
+//       // var workbook = XLSX.read(data, {
+//       //   type: 'binary'
+//       // });
+
+//       // workbook.SheetNames.forEach(function(sheetName) {
+//       //   // Here is your object
+//       //   var XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
+//       //   var json_object = JSON.stringify(XL_row_object);
+//       //   console.log(json_object);
+
+//       // })
+//       //parse your data here
+//       //you can split into lines using data.split('\n') 
+//       //an use regex functions to effectively parse it
+
+//     }
+//   });
+// function sleep(ms) {
+//   return new Promise(resolve => setTimeout(resolve, ms));
+// }
+
+// function geocodeAddress(geocoder, resultsMap) {
+//   // for (i=0; i<mydata.length; i++) {
+//   //   sleep(1000).then(() => {
+//   //     doSomething(geocoder,resultsMap,i);  
+//   //   });
     
-  // }
-  doSomething(geocoder, resultsMap,0);
+//   // }
+//   doSomething(geocoder, resultsMap,0);
+// }
+function setmapmarker(i) {
+  for(j=0; j< markers.length; j++) {
+    markers[j].setOptions({'opacity': 0.7});
+  }
+  markers[i].setOptions({'opacity': 1});
+  var scale = Math.pow(2, map.getZoom());
+  x_offset = document.getElementById("map").offsetWidth / 5;
+  var worldCoordinateCenter = map.getProjection().fromLatLngToPoint(markers[i].getPosition());
+  var pixelOffset = new google.maps.Point((x_offset/scale) || 0,(0/scale) ||0);
+
+  var worldCoordinateNewCenter = new google.maps.Point(
+      worldCoordinateCenter.x - pixelOffset.x,
+      worldCoordinateCenter.y + pixelOffset.y
+  );
+
+  var newCenter = map.getProjection().fromPointToLatLng(worldCoordinateNewCenter);var scale = Math.pow(2, map.getZoom());
+  x_offset = document.getElementById("map").offsetWidth / 5;
+  var worldCoordinateCenter = map.getProjection().fromLatLngToPoint(markers[i].getPosition());
+  var pixelOffset = new google.maps.Point((x_offset/scale) || 0,(0/scale) ||0);
+
+  var worldCoordinateNewCenter = new google.maps.Point(
+      worldCoordinateCenter.x - pixelOffset.x,
+      worldCoordinateCenter.y + pixelOffset.y
+  );
+
+  var newCenter = map.getProjection().fromPointToLatLng(worldCoordinateNewCenter);
+  map.panTo(newCenter);
 }
 
-function doSomething(geocoder, resultsMap,i) {
-  console.log(i);
-  if(i==mydata.length){
-    console.log(mydata);
-    return;
-  }
+function doSomething(resultsMap,i) {
   var address = mydata[i].Addresssrc + " " + mydata[i].Citysrc + " " + mydata[i].Statesrc;
   // console.log(mydata[i]);
   var temp_content =`
-        <section id="mydata`+i+`" class="c-mapstack__card" data-slug="intro" style="display: block;">
+        <section id="mydata`+i+`" class="c-mapstack__card" data-slug="intro" style="display: block;" onmouseover="setmapmarker(`+i+`)">
           <h1>`+address+`</h1>
           <h2 class="c-entry-summary p-dek">$`+mydata[i].price+`</h2>
           <div class="c-mapstack__photo">
@@ -116,45 +149,37 @@ function doSomething(geocoder, resultsMap,i) {
   var content_panel = document.getElementById("content_panel");
   content_panel.innerHTML+=(temp_content);
   // var address = "56 Davis Rd Orinda CA";
-  geocoder.geocode({'address': address}, function(results, status) {
-    if (status === 'OK') {
-      resultsMap.setCenter(results[0].geometry.location);
-      var marker = new google.maps.Marker({
-        map: resultsMap,
-        position: results[0].geometry.location
-      });
-      marker.addListener('click', function() {
-          map.setCenter(marker.getPosition());
-          var scale = Math.pow(2, map.getZoom());
-          x_offset = document.getElementById("map").offsetWidth / 5;
-          var worldCoordinateCenter = map.getProjection().fromLatLngToPoint(marker.getPosition());
-          var pixelOffset = new google.maps.Point((x_offset/scale) || 0,(0/scale) ||0);
-
-          var worldCoordinateNewCenter = new google.maps.Point(
-              worldCoordinateCenter.x - pixelOffset.x,
-              worldCoordinateCenter.y + pixelOffset.y
-          );
-
-          var newCenter = map.getProjection().fromPointToLatLng(worldCoordinateNewCenter);
-
-          map.setCenter(newCenter);
-
-          $('html, body').animate({
-                scrollTop: $("#mydata"+i).offset().top
-            }, 500);
-      }); 
-      mydata[i].lat =results[0].geometry.location.lat();
-      mydata[i].lng =results[0].geometry.location.lng();
-    } else {
-      console.log(results);
-      alert('Geocode was not successful for the following reason: ' + status);
-    }
-    // setTimeout(doSomething(geocoder,resultsMap,i+1), 10000);
-    
-      sleep(1000).then(() => {
-        console.log(i);
-        doSomething(geocoder,resultsMap,i+1);  
-      });
-
+  var marker = new google.maps.Marker({
+    map: resultsMap,
+    icon: 'asset/markers/number_'+i+".png",
+    position: {lat: mydata[i].lat, lng: mydata[i].lng}
   });
+  marker.setOptions({'opacity': 0.7})
+  markers.push(marker);
+  console.log(mydata[i]);
+  marker.addListener('click', function() {
+      map.setCenter(this.getPosition());
+      var scale = Math.pow(2, map.getZoom());
+      x_offset = document.getElementById("map").offsetWidth / 5;
+      var worldCoordinateCenter = map.getProjection().fromLatLngToPoint(marker.getPosition());
+      var pixelOffset = new google.maps.Point((x_offset/scale) || 0,(0/scale) ||0);
+
+      var worldCoordinateNewCenter = new google.maps.Point(
+          worldCoordinateCenter.x - pixelOffset.x,
+          worldCoordinateCenter.y + pixelOffset.y
+      );
+
+      var newCenter = map.getProjection().fromPointToLatLng(worldCoordinateNewCenter);
+      for(i=0; i< markers.length; i++) {
+        markers[i].setOptions({'opacity': 0.7});
+      }
+      this.setOptions({'opacity': 1});
+      map.panTo(newCenter);
+
+      $('html, body').animate({
+            scrollTop: $("#mydata"+i).offset().top
+        }, 500);
+  }); 
+
+    // setTimeout(doSomething(geocoder,resultsMap,i+1), 10000);
 }
