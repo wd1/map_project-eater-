@@ -182,12 +182,11 @@ function doSomething(resultsMap,i) {
       );
 
       var newCenter = map.getProjection().fromPointToLatLng(worldCoordinateNewCenter);
-      for(i=0; i< markers.length; i++) {
-        markers[i].setOptions({'opacity': 0.7});
+      for(i=0; j< markers.length; j++) {
+        markers[j].setOptions({'opacity': 0.7});
       }
       this.setOptions({'opacity': 1});
       map.panTo(newCenter);
-
       $('html, body').animate({
             scrollTop: $("#mydata"+i).offset().top
         }, 500);
