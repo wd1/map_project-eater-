@@ -126,7 +126,7 @@ function setmapmarker(i) {
 }
 
 function doSomething(resultsMap,i) {
-  var address = mydata[i].Addresssrc + " " + mydata[i].Citysrc + " " + mydata[i].Statesrc;
+  var address = mydata[i].Addresssrc + " " + mydata[i].Citysrc;
   // console.log(mydata[i]);
   var temp_content =`
         <section id="mydata`+i+`" class="c-mapstack__card" data-slug="intro" style="display: block;" onmouseover="setmapmarker(`+i+`)">
