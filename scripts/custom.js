@@ -182,7 +182,7 @@ function doSomething(resultsMap,i) {
       );
 
       var newCenter = map.getProjection().fromPointToLatLng(worldCoordinateNewCenter);
-      for(i=0; j< markers.length; j++) {
+      for(j=0; j< markers.length; j++) {
         markers[j].setOptions({'opacity': 0.7});
       }
       this.setOptions({'opacity': 1});
